@@ -1,70 +1,29 @@
-const video = document.getElementById("video");
-const canvas = document.getElementById("canvas");
-const snapButton = document.getElementById("snap");
-const saveButton = document.getElementById("save");
+/ Get elements
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const snapButton = document.getElementById('snap');
+const saveButton = document.getElementById('save');
+const context = canvas.getContext('2d');
 
-const context = canvas.getContext("2d");
+// Access the device camera and stream to video element
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then((stream) => {
+        video.srcObject = stream;
+    })
+    .catch((error) => {
+        console.error('Error accessing the camera: ', error);
+    });
 
-// =========================
-// START CAMERA
-// =========================
-
-navigator.mediaDevices.getUserMedia({
-video: true
-})
-.then(function(stream) {
-
-```
-video.srcObject = stream;
-```
-
-})
-.catch(function(error) {
-
-```
-console.error("Camera error:", error);
-
-alert("Unable to access the camera. Please allow camera access.");
-```
-
+// Event listener for the snap button
+snapButton.addEventListener('click', () => {
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.style.display = 'block'; // Show canvas with the captured image
 });
 
-// =========================
-// TAKE PHOTO
-// =========================
-
-snapButton.addEventListener("click", function() {
-
-```
-context.drawImage(
-    video,
-    0,
-    0,
-    canvas.width,
-    canvas.height
-);
-
-canvas.style.display = "block";
-```
-
-});
-
-// =========================
-// SAVE PHOTO
-// =========================
-
-saveButton.addEventListener("click", function() {
-
-```
-const image = canvas.toDataURL("image/png");
-
-const link = document.createElement("a");
-
-link.href = image;
-
-link.download = "photobot-photo.png";
-
-link.click();
-```
-
+// Event listener for the save button
+saveButton.addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png'); // Convert canvas to image
+    link.download = 'photo.png'; // Set a default filename
+    link.click(); // Trigger the download
 });
